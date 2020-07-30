@@ -4,6 +4,7 @@ const io = require("socket.io")(http);
 
 var loggedPlayers = [];
 var invites = [];
+var messages = [];
 
 io.on("connection", (socket) => {
   verifyIfUserisLoggedAndLogin(
@@ -11,12 +12,20 @@ io.on("connection", (socket) => {
     socket
   );
   checkAndEmitInvites(socket);
-  console.log(loggedPlayers);
+  checkChatMessages(socket);
   socket.on("disconnect", () => {
     removevePlayerLogged(JSON.parse(socket.handshake.query.player), socket);
-    console.log(loggedPlayers);
   });
 });
+
+checkChatMessages = (socket) => {
+  socket.on("message", (message) => {
+    messages.push(message);
+    socket.emit("message", messages);
+    socket.broadcast.emit("message", messages);
+    console.log(messages);
+  });
+};
 
 checkAndEmitInvites = (socket) => {
   socket.on("invite.send", (invite) => {
@@ -30,6 +39,10 @@ removevePlayerLogged = (player, socket) => {
   loggedPlayers = loggedPlayers.filter((l) => l.email !== player.email);
   socket.emit("players.logged", loggedPlayers);
   socket.broadcast.emit("players.logged", loggedPlayers);
+  socket.emit("invite.send", invites);
+  socket.broadcast.emit("invite.send", invites);
+  socket.emit("message", messages);
+  socket.broadcast.emit("message", messages);
 };
 
 verifyIfUserisLoggedAndLogin = (player, socket) => {
@@ -40,6 +53,10 @@ verifyIfUserisLoggedAndLogin = (player, socket) => {
     loggedPlayers.push(player);
     socket.emit("players.logged", loggedPlayers);
     socket.broadcast.emit("players.logged", loggedPlayers);
+    socket.emit("invite.send", invites);
+    socket.broadcast.emit("invite.send", invites);
+    socket.emit("message", messages);
+    socket.broadcast.emit("message", messages);
   }
 };
 
