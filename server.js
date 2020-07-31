@@ -8,26 +8,26 @@ if (process.env.NODE_ENV !== "production") {
 const PORT = process.env.PORT;
 var loggedPlayers = [];
 var invites = [];
-var messages = [];
 
 io.on("connection", (socket) => {
-  verifyIfUserisLoggedAndLogin(
+  verifyIfUserIsLoggedAndLoginUser(
     JSON.parse(socket.handshake.query.player),
     socket
   );
+  checkDeniedInvites(socket);
   checkAndEmitInvites(socket);
-  checkChatMessages(socket);
+
   socket.on("disconnect", () => {
-    removevePlayerLogged(JSON.parse(socket.handshake.query.player), socket);
+    removePlayerLogged(JSON.parse(socket.handshake.query.player), socket);
   });
 });
 
-checkChatMessages = (socket) => {
-  socket.on("message", (message) => {
-    messages.push(message);
-    socket.emit("message", messages);
-    socket.broadcast.emit("message", messages);
-    console.log(messages);
+checkDeniedInvites = (socket) => {
+  socket.on("invite.deny", (invite) => {
+    const index = invites.findIndex((i) => i.id === invite.id);
+    invites[index].status = "denied";
+    socket.emit("invite.send", invites);
+    socket.broadcast.emit("invite.send", invites);
   });
 };
 
@@ -39,28 +39,25 @@ checkAndEmitInvites = (socket) => {
   });
 };
 
-removevePlayerLogged = (player, socket) => {
-  loggedPlayers = loggedPlayers.filter((l) => l.email !== player.email);
+removePlayerLogged = (player, socket) => {
+  loggedPlayers = loggedPlayers.filter((l) => l.id !== player.id);
+
   socket.emit("players.logged", loggedPlayers);
   socket.broadcast.emit("players.logged", loggedPlayers);
   socket.emit("invite.send", invites);
   socket.broadcast.emit("invite.send", invites);
-  socket.emit("message", messages);
-  socket.broadcast.emit("message", messages);
 };
 
-verifyIfUserisLoggedAndLogin = (player, socket) => {
-  const platerAlreadyLogged = loggedPlayers.filter(
+verifyIfUserIsLoggedAndLoginUser = (player, socket) => {
+  const playerAlreadyLogged = loggedPlayers.filter(
     (l) => l.email === player.email
   );
-  if (platerAlreadyLogged) {
+  if (playerAlreadyLogged) {
     loggedPlayers.push(player);
     socket.emit("players.logged", loggedPlayers);
     socket.broadcast.emit("players.logged", loggedPlayers);
     socket.emit("invite.send", invites);
     socket.broadcast.emit("invite.send", invites);
-    socket.emit("message", messages);
-    socket.broadcast.emit("message", messages);
   }
 };
 
