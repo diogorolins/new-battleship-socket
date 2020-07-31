@@ -1,7 +1,11 @@
 const app = require("express")();
 const http = require("http").createServer(app);
 const io = require("socket.io")(http);
+if (process.env.NODE_ENV !== "production") {
+  require("dotenv/config");
+}
 
+const PORT = process.env.PORT;
 var loggedPlayers = [];
 var invites = [];
 var messages = [];
@@ -60,6 +64,6 @@ verifyIfUserisLoggedAndLogin = (player, socket) => {
   }
 };
 
-http.listen(3002, () => {
-  console.log("Listen on port 3002 ");
+http.listen(PORT, () => {
+  console.log(`Listen on port ${PORT} `);
 });
