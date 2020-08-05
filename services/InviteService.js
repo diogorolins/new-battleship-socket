@@ -71,7 +71,10 @@ class InviteService {
       console.log(
         "--------------------------------------------------------------------"
       );
+
       socket.broadcast.emit("invite.gameCanStart", invite.to.id);
+      socket.emit("players.logged", this.loggedPlayers);
+      socket.broadcast.emit("players.logged", this.loggedPlayers);
     });
   }
 }
