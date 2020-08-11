@@ -13,10 +13,11 @@ if (process.env.NODE_ENV !== "production") {
 const PORT = process.env.PORT;
 var loggedPlayers = [];
 var invites = [];
+var games = [];
 
 loggedService = new LoggedService(loggedPlayers, invites);
 inviteService = new InviteService(loggedPlayers, invites);
-gameService = new GameService(loggedPlayers);
+gameService = new GameService(games);
 
 io.on("connect", (socket) => {
   loggedService.verifyIfUserIsLoggedAndLoginUser(socket);
@@ -25,8 +26,11 @@ io.on("connect", (socket) => {
   inviteService.checkAndEmitInvites(socket);
   inviteService.checkClearInvites(socket);
   inviteService.checkIfGameCanStart(socket);
-  gameService.putPlayerInGame(socket);
   loggedService.removePlayerLogged(socket);
+});
+
+io.of("/gameConfig").on("connect", (socket) => {
+  gameService.startGame(socket);
 });
 
 http.listen(PORT, () => {

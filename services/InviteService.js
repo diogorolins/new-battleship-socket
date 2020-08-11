@@ -63,6 +63,7 @@ class InviteService {
       socket.broadcast.emit("invite.send", this.invites);
     });
   }
+
   checkIfGameCanStart(socket) {
     socket.on("invite.gameCanStart", (invite) => {
       console.log(
