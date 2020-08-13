@@ -61,7 +61,7 @@ class InviteService {
   checkIfGameCanStart(socket) {
     socket.on("invite.gameCanStart", (invite) => {
       console.log(
-        `[INVITE SERVICE INFORM]: O jogo entre ${invite.from.name} e ${invite.to.name} vai começar`
+        `[INVITE SERVICE INFORM]: O jogo entre ${invite.from.name} e ${invite.to.name} vai começar a ser configurado`
       );
       console.log(
         "--------------------------------------------------------------------"

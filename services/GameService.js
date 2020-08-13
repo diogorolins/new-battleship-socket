@@ -6,6 +6,12 @@ class GameService {
 
   startGame(socket) {
     socket.on("create.game", (game) => {
+      console.log(
+        `[GAME SERVICE INFORM]: Foi criado um jogo por ${game.player.id}`
+      );
+      console.log(
+        "--------------------------------------------------------------------"
+      );
       this.games.push(game);
 
       const gameAlreadStarted = this.games.filter((g) => g.id === game.id);

@@ -31,12 +31,10 @@ io.on("connect", (socket) => {
 });
 
 io.of("/gameConfig").on("connect", (socket) => {
-  console.log("conectei na configuração do jogo");
   gameService.startGame(socket);
 });
 
 io.of("/game").on("connect", (socket) => {
-  console.log("conectei no jogo");
   gameService.hitStrike(socket);
 });
 
