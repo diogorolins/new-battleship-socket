@@ -1,6 +1,7 @@
 class GameService {
-  constructor(games) {
+  constructor(games, strikes) {
     this.games = games;
+    this.strikes = strikes;
   }
 
   startGame(socket) {
@@ -12,6 +13,18 @@ class GameService {
         socket.emit("game.canStart", this.games);
         socket.broadcast.emit("game.canStart", this.games);
       }
+    });
+  }
+  hitStrike(socket) {
+    socket.on("game.strike", (strike) => {
+      console.log(
+        `[GAME SERVICE INFORM]: ${strike.playerId} atacou na posição ${strike.position}`
+      );
+      console.log(
+        "--------------------------------------------------------------------"
+      );
+      this.strikes.push(strike);
+      socket.broadcast.emit("game.strike", this.strikes);
     });
   }
 }

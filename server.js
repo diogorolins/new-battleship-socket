@@ -14,10 +14,11 @@ const PORT = process.env.PORT;
 var loggedPlayers = [];
 var invites = [];
 var games = [];
+var strikes = [];
 
 loggedService = new LoggedService(loggedPlayers, invites);
 inviteService = new InviteService(loggedPlayers, invites);
-gameService = new GameService(games);
+gameService = new GameService(games, strikes);
 
 io.on("connect", (socket) => {
   loggedService.verifyIfUserIsLoggedAndLoginUser(socket);
@@ -30,7 +31,13 @@ io.on("connect", (socket) => {
 });
 
 io.of("/gameConfig").on("connect", (socket) => {
+  console.log("conectei na configuração do jogo");
   gameService.startGame(socket);
+});
+
+io.of("/game").on("connect", (socket) => {
+  console.log("conectei no jogo");
+  gameService.hitStrike(socket);
 });
 
 http.listen(PORT, () => {
