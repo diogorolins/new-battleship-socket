@@ -6,12 +6,6 @@ class InviteService {
 
   checkClearInvites(socket) {
     socket.on("invite.clear", (playerId) => {
-      console.log(
-        `[INVITE SERVICE INFORM]: ${invite.from.name} limpou seus convites`
-      );
-      console.log(
-        "--------------------------------------------------------------------"
-      );
       this.invites = this.invites.filter((p) => p.from.id !== playerId);
       socket.emit("invite.send", this.invites);
       socket.broadcast.emit("invite.send", this.invites);
