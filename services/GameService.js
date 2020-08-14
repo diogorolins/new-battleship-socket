@@ -1,7 +1,8 @@
 class GameService {
-  constructor(games, strikes) {
+  constructor(games, strikes, gameMessages) {
     this.games = games;
     this.strikes = strikes;
+    this.gameMessages = gameMessages;
   }
 
   startGame(socket) {
@@ -31,6 +32,14 @@ class GameService {
       );
       this.strikes.push(strike);
       socket.broadcast.emit("game.strike", this.strikes);
+    });
+  }
+
+  getMessages(socket) {
+    socket.on("game.messages", (messages) => {
+      this.gameMessages.push(messages);
+      socket.emit("game.messages", this.gameMessages);
+      socket.broadcast.emit("game.messages", this.gameMessages);
     });
   }
 }

@@ -15,10 +15,11 @@ var loggedPlayers = [];
 var invites = [];
 var games = [];
 var strikes = [];
+var gameMessages = [];
 
 loggedService = new LoggedService(loggedPlayers, invites);
 inviteService = new InviteService(loggedPlayers, invites);
-gameService = new GameService(games, strikes);
+gameService = new GameService(games, strikes, gameMessages);
 
 io.on("connect", (socket) => {
   loggedService.verifyIfUserIsLoggedAndLoginUser(socket);
@@ -36,6 +37,7 @@ io.of("/gameConfig").on("connect", (socket) => {
 
 io.of("/game").on("connect", (socket) => {
   gameService.hitStrike(socket);
+  gameService.getMessages(socket);
 });
 
 http.listen(PORT, () => {

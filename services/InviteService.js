@@ -47,7 +47,7 @@ class InviteService {
   checkAndEmitInvites(socket) {
     socket.on("invite.send", (invite) => {
       console.log(
-        `[INVITE SERVICE INFORM - TEST]: ${invite.from.name} convidou ${invite.to.name}`
+        `[INVITE SERVICE INFORM]: ${invite.from.name} convidou ${invite.to.name}`
       );
       console.log(
         "--------------------------------------------------------------------"
